@@ -1,0 +1,17 @@
+梁子林 · GIS 个人网站 V1 — 快速上手
+
+本地预览：
+  1) 安装 Node.js（22 LTS）
+  2) VS Code 打开本文件夹
+  3) 终端运行 npm install
+  4) 运行 npm run dev，访问终端中的本地网址
+
+GitHub Pages 上线（你目前已有 V2）：
+  1) 先将此版本推送到新分支 portfolio-v3
+  2) 合并 PR 进入 main
+  3) Settings > Pages > Source 改为 GitHub Actions
+  4) Actions 里等待 Deploy GIS Portfolio to GitHub Pages 成功
+  5) 访问 https://lzllzl777.github.io/github.io/
+
+重点：React + Vite 的 src 不能像纯 HTML 那样直接发布，必须 npm run build。
+详细操作、内容替换和注意事项请看 README.md。
