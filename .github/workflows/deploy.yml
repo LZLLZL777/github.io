@@ -44,3 +44,25 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Check live HTML and asset URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://lzllzl777.github.io/github.io/"
+          for i in 1 2 3 4 5 6; do
+            echo "---- Live check attempt $i ----"
+            curl -fsSL --max-time 15 -H "Cache-Control: no-cache" "$URL?debug_run=${GITHUB_RUN_ID}-$i" -o /tmp/live.html
+            grep -oE '<script[^>]+src="[^"]+"' /tmp/live.html || true
+            grep -oE '<link[^>]+href="[^"]+"' /tmp/live.html || true
+            if grep -q 'src="/github.io/assets/' /tmp/live.html; then
+              echo "Live HTML points to compiled Vite assets."
+              ASSET=$(grep -oE 'src="/github.io/assets/[^"]+\.js"' /tmp/live.html | head -1 | sed -E 's/^src="([^"]+)"$/\1/')
+              curl -sS -L -o /dev/null -w 'JavaScript asset HTTP status: %{http_code}\n' "https://lzllzl777.github.io$ASSET"
+              exit 0
+            fi
+            echo "Live HTML does not yet point to compiled assets."
+            sed -n '1,24p' /tmp/live.html
+            sleep 10
+          done
+          echo "::warning::Site still serves non-compiled entry HTML; check GitHub Pages source or CDN."
